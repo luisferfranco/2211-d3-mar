@@ -1,0 +1,10 @@
+.fig {
+  background-color: #ddd;
+}
+
+.texto {
+  font-size: 42px;
+  font-weight: bold;
+  font-family: Impact;
+  fill: #457b9d;
+}
