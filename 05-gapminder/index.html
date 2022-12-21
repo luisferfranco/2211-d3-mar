@@ -42,18 +42,36 @@
     </header>
 
     <main class="container-fluid pt-5">
-      <div class="d-flex justify-content-between mb-3">
+      <div class="mb-3">
         <h1>Clon de Gapminder</h1>
         <div>
           <button onclick="delta(-1)" class="btn btn-info">
             <i class="fas fa-3x fa-caret-left"></i>
+          </button>
+          <button
+            onclick="toggleAnimando()"
+            id="btnAnimando"
+            class="btn btn-success"
+          >
+            <i class="fas fa-play fa-3x"></i>
           </button>
           <button onclick="delta(1)" class="btn btn-info">
             <i class="fas fa-3x fa-caret-right"></i>
           </button>
         </div>
       </div>
-      <div id="graf"></div>
+      <div id="graf" style="position: relative">
+        <div
+          id="tooltip"
+          class="p-2 bg-secondary rounded-2 shadow-sm text-white"
+          style="position: absolute; display: none"
+        >
+          Country: <strong><span id="country">xxxxx</span></strong
+          ><br />
+          Population: <strong><span id="population">xxxxx</span></strong
+          ><br />
+        </div>
+      </div>
     </main>
 
     <script

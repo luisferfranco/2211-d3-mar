@@ -1,4 +1,8 @@
 const graf = d3.select("#graf")
+const tooltip = d3.select("#tooltip")
+const country = d3.select("#country")
+const population = d3.select("#population")
+const btnAnimando = d3.select("#btnAnimando")
 
 const margins = { left: 75, top: 40, right: 10, bottom: 50 }
 const anchoTotal = +graf.style("width").slice(0, -2)
@@ -45,6 +49,9 @@ const xAxis = d3.axisBottom(x).tickSize(-alto)
 const yAxis = d3.axisLeft(y).tickSize(-ancho)
 
 let iy, maxy, miny
+let animando = false
+let intervalo
+let showT = undefined
 
 const load = async () => {
   data = await d3.csv("data/gapminder.csv", d3.autoType)
@@ -86,19 +93,38 @@ const load = async () => {
 
 const render = (data) => {
   let newData = d3.filter(data, (d) => d.year == iy)
-
   console.log(newData)
 
-  g.selectAll("circle")
-    .data(newData)
+  // Join-Enter-Update-Exit
+
+  const circle = g.selectAll("circle").data(newData, (d) => d.country)
+
+  circle
     .enter()
     .append("circle")
     .attr("cx", (d) => x(d.income))
     .attr("cy", (d) => y(d.life_exp))
-    .attr("r", (d) => Math.sqrt(A(d.population) / Math.PI))
+    .attr("r", 0)
+    .attr("fill", "#00ff0088")
     .attr("clip-path", "url(#clip)")
-    .attr("fill", (d) => continente(d.continent) + "88")
     .attr("stroke", "#00000088")
+    .on("click", (e, d) => showTooltip(d))
+    // .on("mouseout", (e, d) => hideTooltip())
+    .merge(circle)
+    .transition()
+    .duration(200)
+    .attr("cx", (d) => x(d.income))
+    .attr("cy", (d) => y(d.life_exp))
+    .attr("r", (d) => Math.sqrt(A(d.population) / Math.PI))
+    .attr("fill", (d) => continente(d.continent) + "88")
+
+  circle
+    .exit()
+    .transition()
+    .duration(200)
+    .attr("r", 0)
+    .attr("fill", "#ff000088")
+    .remove()
 
   yearLabel.text(iy)
 }
@@ -107,7 +133,55 @@ const delta = (d) => {
   iy += d
   if (iy > maxy) iy = maxy
   if (iy < miny) iy = miny
+
+  datum = data.filter((d) => d.country == showT && d.year == iy)[0]
+  tooltip
+    .style(
+      "left",
+      x(datum.income) - Math.sqrt(A(datum.population) / Math.PI) + "px"
+    )
+    .style(
+      "top",
+      y(datum.life_exp) - Math.sqrt(A(datum.population) / Math.PI) + "px"
+    )
+  country.text(datum.country)
+  population.text(datum.population.toLocaleString("en-US"))
+
   render(data)
+}
+
+const showTooltip = (d) => {
+  tooltip.style("display", "block")
+  tooltip
+    .style("left", x(d.income) - Math.sqrt(A(d.population) / Math.PI) + "px")
+    .style("top", y(d.life_exp) - Math.sqrt(A(d.population) / Math.PI) + "px")
+  country.text(d.country)
+  population.text(d.population.toLocaleString("en-US"))
+  showT = d.country
+}
+
+const hideTooltip = () => {
+  tooltip.style("display", "none")
+}
+
+// let intervalo
+
+const toggleAnimando = () => {
+  animando = !animando
+  if (animando) {
+    btnAnimando.classed("btn-success", false)
+    btnAnimando.classed("btn-danger", true)
+    btnAnimando.html("<i class='fas fa-stop fa-3x'></i>")
+
+    intervalo = setInterval(() => {
+      delta(1)
+    }, 200)
+  } else {
+    btnAnimando.classed("btn-success", true)
+    btnAnimando.classed("btn-danger", false)
+    btnAnimando.html("<i class='fas fa-play fa-3x'></i>")
+    clearInterval(intervalo)
+  }
 }
 
 load()
