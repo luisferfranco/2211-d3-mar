@@ -92,7 +92,7 @@ const render = () => {
           .append("rect")
           .attr("x", (d) => x(d.tienda))
           .attr("y", y(0))
-          .attr("width", x.bandwidth())
+          .attr("width", x.bandwidth() / 2)
           .attr("height", 0)
           .attr("fill", "green")
           .transition()
@@ -100,6 +100,26 @@ const render = () => {
           .attr("fill", "orange")
           .attr("y", (d) => y(d.ventas))
           .attr("height", (d) => alto - y(d.ventas)),
+      (update) => update.attr("fill", "red"),
+      (exit) => exit
+    )
+  const rectCostos = gCostos
+    .selectAll("rect")
+    .data(data)
+    .join(
+      (enter) =>
+        enter
+          .append("rect")
+          .attr("x", (d) => x(d.tienda) + x.bandwidth() / 2)
+          .attr("y", y(0))
+          .attr("width", x.bandwidth() / 2)
+          .attr("height", 0)
+          .attr("fill", "green")
+          .transition()
+          .duration(2000)
+          .attr("fill", "blue")
+          .attr("y", (d) => y2(d.costo))
+          .attr("height", (d) => alto - y2(d.costo)),
       (update) => update.attr("fill", "red"),
       (exit) => exit
     )

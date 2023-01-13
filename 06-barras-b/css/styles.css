@@ -1,0 +1,31 @@
+.fig {
+  background-color: #ddd;
+}
+
+.texto {
+  font-size: 42px;
+  font-weight: bold;
+  font-family: Impact;
+  fill: #457b9d;
+}
+
+.grupo {
+  fill: #ffffff44;
+  stroke: #00000099;
+}
+
+.ejes {
+  font-size: 16px;
+  font-family: "Fira Code";
+}
+
+.ejes line {
+  stroke-width: 1;
+  stroke: #33333344;
+  stroke-dasharray: 4 2;
+}
+
+.labels {
+  font-size: 20px;
+  font-family: "Fira Code";
+}
